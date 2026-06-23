@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MPS Player</title>
+    <title>MPS Player - Environnement de Test</title>
     
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     
     <style>
-        /* Variables globales pour forcer le lecteur en mode monochrome épuré */
         :root {
             --plyr-color-main: #ffffff;
-            --plyr-video-control-color: #b0b0b0;
+            --plyr-video-control-color: #888888;
             --plyr-video-control-color-hover: #ffffff;
         }
 
         body { 
-            background-color: #050505; 
+            /* Effet Maquette : Fond sombre avec une grille de points */
+            background-color: #0a0a0a; 
+            background-image: radial-gradient(#2a2a2a 1px, transparent 0);
+            background-size: 20px 20px;
+            
             color: #e0e0e0;
             font-family: 'Inter', sans-serif;
             margin: 0; 
@@ -29,15 +32,12 @@
             overflow: hidden;
         }
 
-        /* --- MOTION DESIGN (Animations) --- */
-        
-        /* Animation d'apparition fluide avec effet de translation */
+        /* --- MOTION DESIGN (Animations de ta version) --- */
         @keyframes fadeUp {
             0% { opacity: 0; transform: translateY(40px) scale(0.98); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Léger effet de lueur sur le titre */
         @keyframes textGlow {
             0% { text-shadow: 0 0 10px rgba(255,255,255,0); }
             50% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
@@ -45,18 +45,16 @@
         }
 
         /* --- UI ELEMENTS --- */
-
         .header {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: center;
-            /* Animation immédiate pour le titre */
             animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
         .header h1 {
             font-weight: 600;
-            font-size: 1.2rem;
-            letter-spacing: 4px;
+            font-size: 1.4rem;
+            letter-spacing: 5px;
             text-transform: uppercase;
             margin: 0;
             color: #ffffff;
@@ -64,40 +62,83 @@
         }
 
         .header p {
-            font-weight: 300;
+            font-family: 'JetBrains Mono', monospace; /* Police code pour le côté technique */
             font-size: 0.75rem;
-            letter-spacing: 1px;
-            color: #555;
-            margin-top: 8px;
+            color: #666;
+            margin-top: 5px;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .video-wrapper { 
-            width: 90%; 
-            max-width: 1000px; 
-            box-shadow: 0px 30px 60px rgba(0, 0, 0, 0.8);
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: #000;
+        /* Effet Maquette : Fenêtre de logiciel */
+        .mockup-window {
+            width: 90%;
+            max-width: 1000px;
+            background: #000000;
+            border: 1px dashed #333333; 
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0px 30px 60px rgba(0, 0, 0, 0.9);
             
-            /* Motion Design : Le lecteur apparaît juste après le titre */
-            opacity: 0; /* Caché au départ */
+            /* Animation d'entrée décalée par rapport au titre */
+            opacity: 0; 
             animation: fadeUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 0.2s; /* Décalage pour l'effet cascade */
-            
-            /* Transition douce pour l'effet de survol */
+            animation-delay: 0.2s; 
             transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
 
-        /* Effet interactif au survol de la vidéo */
-        .video-wrapper:hover {
+        .mockup-window:hover {
             transform: translateY(-5px);
             box-shadow: 0px 40px 70px rgba(255, 255, 255, 0.03);
+            border-color: #555;
         }
 
-        /* Arrondir les angles de l'interface interne de Plyr */
+        /* Fausse barre macOS */
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+
+        .window-controls .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #333;
+        }
+        
+        .window-controls .dot:nth-child(1) { background-color: #ff5f56; } /* Rouge */
+        .window-controls .dot:nth-child(2) { background-color: #ffbd2e; } /* Jaune */
+        .window-controls .dot:nth-child(3) { background-color: #27c93f; } /* Vert */
+
+        .video-wrapper { 
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #111;
+            position: relative;
+        }
+
         .plyr {
-            border-radius: 12px;
+            border-radius: 4px;
+        }
+
+        /* Message de statut au chargement */
+        #status-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff4444;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            text-align: center;
+            z-index: 10;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border: 1px solid #ff4444;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -108,18 +149,33 @@
         <p>test en cours . . .</p>
     </div>
 
-    <div class="video-wrapper">
-        <video id="player" controls crossorigin playsinline>
-            <source src="https://nexus-112.seur.tb-cdn.st/dld/f6f2ae7f-0daf-4f5e-bbbf-d1d8271013d1?token=eyJhbGciOiJIUzI1NiIsImtpZCI6Im0yWmRqcWFLeExHZ0JFZFgiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2JlanhmeXRrbm5rb2VndHRldXpzLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiNGE0MmJlNy01YTM5LTQ5MGItODhiMi1kZGRhZTQ1NTFjY2QiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzgyMjQ2OTIwLCJpYXQiOjE3ODIyNDMzMjAsImVtYWlsIjoieWFuZzA5ODUxMTEzMThAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InlhbmcwOTg1MTExMzE4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImI0YTQyYmU3LTVhMzktNDkwYi04OGIyLWRkZGFlNDU1MWNjZCJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im90cCIsInRpbWVzdGFtcCI6MTc4MTczMzkyMH1dLCJzZXNzaW9uX2lkIjoiOGUxMTdhYWMtNWQ0OC00YmE5LTk2ZTQtYjhlMTAxNzA4NzNlIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.D4YSnqhh2utRQqj690Cdm-qEmKqefUp2jTz818Av8X0" />
-        </video>
+    <div class="mockup-window">
+        <div class="window-controls">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <div class="video-wrapper">
+            <div id="status-message">Erreur de flux. Le token TorBox a expiré.</div>
+            
+            <video id="player" controls crossorigin playsinline>
+                <source src="https://nexus-112.seur.tb-cdn.st/dld/f6f2ae7f-0daf-4f5e-bbbf-d1d8271013d1?token=eyJhbGciOiJIUzI1NiIsImtpZCI6Im0yWmRqcWFLeExHZ0JFZFgiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2JlanhmeXRrbm5rb2VndHRldXpzLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJiNGE0MmJlNy01YTM5LTQ5MGItODhiMi1kZGRhZTQ1NTFjY2QiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzgyMjQ2OTIwLCJpYXQiOjE3ODIyNDMzMjAsImVtYWlsIjoieWFuZzA5ODUxMTEzMThAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6InlhbmcwOTg1MTExMzE4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6ImI0YTQyYmU3LTVhMzktNDkwYi04OGIyLWRkZGFlNDU1MWNjZCJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im90cCIsInRpbWVzdGFtcCI6MTc4MTczMzkyMH1dLCJzZXNzaW9uX2lkIjoiOGUxMTdhYWMtNWQ0OC00YmE5LTk2ZTQtYjhlMTAxNzA4NzNlIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.D4YSnqhh2utRQqj690Cdm-qEmKqefUp2jTz818Av8X0" />
+            </video>
+        </div>
     </div>
 
     <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
     <script>
-        // Initialisation de Plyr avec des contrôles choisis pour garder un aspect clean
+        // Initialisation de Plyr
         const player = new Plyr('#player', {
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-            hideControls: true // Les contrôles disparaissent doucement en mode inactif
+            hideControls: true
+        });
+
+        // Affichage du message rouge uniquement si le lien est vraiment brisé ou expiré
+        document.getElementById('player').addEventListener('error', function() {
+            document.getElementById('status-message').style.display = 'block';
         });
     </script>
 
